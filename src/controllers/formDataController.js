@@ -116,7 +116,6 @@ const formDataController = {
         try {
             const idForm = req.query.idForm;
             const idResponsible = req.query.idResponsible;
-            console.log(idResponsible);
             const { 
                 name, 
                 collectCity, 
