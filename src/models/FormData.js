@@ -69,10 +69,10 @@ const FormDataSchema = new mongoose.Schema({
   advancePrice: {
     type: String,
   },
-  radioCalculoDoValor: {
+  valueCalculation: {
     type: String,
     required: true,
-    enum: ['Kg', 'T', 'Total'],
+    enum: ['KG', 'T', 'Total'],
   },
   radioValueLocalizacao: {
     type: String,
@@ -94,10 +94,10 @@ const FormDataSchema = new mongoose.Schema({
     required: true,
     enum: ['Sim', 'Não'],
   },
-  radioUnidade: {
+  unitMeasurement: {
     type: String,
     required: true,
-    enum: ['Kg', 'T'],
+    enum: ['KG', 'T'],
   },
   radioValueValor: {
     type: String,
