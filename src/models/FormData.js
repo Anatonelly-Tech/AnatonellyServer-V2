@@ -54,6 +54,15 @@ const FormDataSchema = new mongoose.Schema({
   height: {
     type: String,
   },
+  width: {
+    type: String,
+  },
+  idResponsible:
+  {
+    type: Array,
+    required: true,
+  },
+
   freightPrice: {
     type: String,
     required: true,

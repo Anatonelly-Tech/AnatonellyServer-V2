@@ -21,6 +21,7 @@ const formDataController = {
         sizeCubic,
         length,
         height,
+        width,
         freightPrice,
         paymentForm,
         comments,
@@ -36,7 +37,7 @@ const formDataController = {
         radioPacoteEscolhido,
         veiculos,
         carrocerias,
-        idResponsible
+        idResponsible,
       } = req.body;
 
       // schema
@@ -57,6 +58,7 @@ const formDataController = {
         sizeCubic,
         length,
         height,
+        width,
         freightPrice,
         paymentForm,
         comments,
@@ -117,8 +119,8 @@ const formDataController = {
   update: async (req, res) => {
     try {
       const idForm = req.query.idForm;
-      const idResponsible = req.query.idResponsible;
       const {
+        idResponsible,
         name,
         collectCity,
         collectDate,
@@ -132,6 +134,7 @@ const formDataController = {
         sizeCubic,
         length,
         height,
+        width,
         freightPrice,
         paymentForm,
         comments,
@@ -147,13 +150,16 @@ const formDataController = {
         radioPacoteEscolhido,
         veiculos,
         carrocerias,
+        statusItem,
       } = req.body;
       const formData = {
         name,
         collectCity,
         collectDate,
         deliveryCity,
+        idResponsible,
         deliveryDate,
+        idResponsible,
         responsibleFreight: await ResponsibleFreightModel.find({
           idResponsible,
         }),
@@ -165,6 +171,7 @@ const formDataController = {
         sizeCubic,
         length,
         height,
+        width,
         freightPrice,
         paymentForm,
         comments,
@@ -180,6 +187,7 @@ const formDataController = {
         radioPacoteEscolhido,
         veiculos,
         carrocerias,
+        statusItem,
       };
 
       const response = await FormDataModel.findOneAndUpdate(
