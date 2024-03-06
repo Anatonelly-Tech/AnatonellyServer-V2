@@ -13,7 +13,7 @@ const responsibleFreightController = {
         department,
         cpf,
         password,
-        isAdmin,
+        role,
       } = req.body;
 
       const responsibleFreight = {
@@ -24,7 +24,7 @@ const responsibleFreightController = {
         contactWay,
         department,
         password,
-        isAdmin,
+        role,
       };
 
       const response = await ResponsibleFreightModel.create(responsibleFreight);
@@ -81,7 +81,7 @@ const responsibleFreightController = {
         contactWay,
         department,
         password,
-        isAdmin,
+        role,
         cpf,
       } = req.body;
 
@@ -93,7 +93,7 @@ const responsibleFreightController = {
         contactWay,
         department,
         password,
-        isAdmin,
+        role,
       };
 
       const response = await ResponsibleFreightModel.findOneAndUpdate(

@@ -49,10 +49,11 @@ const ResponsibleFreightSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
-  isAdmin: {
-    type: Boolean,
+  role: {
+    type: String,
     required: true,
-    default: false,
+    enum: ['Admin', 'User'],
+    default: 'User',
   },
   createdAt: {
     type: String,
