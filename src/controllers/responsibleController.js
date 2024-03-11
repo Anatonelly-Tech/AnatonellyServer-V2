@@ -55,6 +55,21 @@ const responsibleFreightController = {
       console.log(err);
     }
   },
+  getByEmail: async (req, res) => {
+    try {
+      const email = req.params.email;
+      const response = await ResponsibleFreightModel.findOne({ email }).select(
+        '+password'
+      );
+      if (!response) {
+        return res.status(400).json({ error: 'Email não existe!' });
+      }
+      return res.status(200).json({ response });
+    } catch (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'Erro ao buscar email!' });
+    }
+  },
   delete: async (req, res) => {
     try {
       const idResponsible = req.params.idResponsible;

@@ -10,6 +10,10 @@ router
   .get((req, res) => responsibleController.getAll(req, res));
 
 router
+  .route('/responsibleAuth/:email')
+  .get((req, res) => responsibleController.getByEmail(req, res));
+
+router
   .route('/responsible/:idResponsible')
   .get((req, res) => responsibleController.getById(req, res));
 

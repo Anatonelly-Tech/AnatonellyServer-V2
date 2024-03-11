@@ -1,117 +1,167 @@
 const { User: UserModel } = require('../models/User');
+const {
+  ResponsibleFreight: ResponsibleFreightModel,
+} = require('../models/ResponsibleFreight');
 
 const userController = {
   create: async (req, res) => {
-    const { name, email, password, hash } = req.body;
     try {
+      const { name, email, role, password, picture } = req.body;
       const user = {
-        hash,
         name,
         email,
         password,
+        role,
+        picture,
       };
 
-      const response = await UserModel.create(user);
-      res.status(200).json({ response, msg: 'Usuário criado com sucesso!' });
-    } catch (err) {
-      if (err.code === 11000) {
-        try {
-          const response = await UserModel.findOne({ email });
-          if (response) {
-            res.status(200).json({ error: 'Email de registro já existe!' });
-          } else {
-            return res
-              .status(400)
-              .json({ error: 'Hash de registro já existe!' });
-          }
-        } catch (err) {
-          res.status(400).json({ error: 'Falha no registro' });
-        }
+      const tryFindUser = await UserModel.findOne({ email: user.email });
+      if (tryFindUser) {
+        return res.status(400).json({ error: 'Email já cadastrado' });
       }
+
+      const response = await UserModel.create(user);
+
+      return res
+        .status(200)
+        .json({ response, msg: 'Usuário criado com sucesso!' });
+    } catch (err) {
       console.log(err);
+      return res.status(500).json({ error: 'Erro ao criar usuário' });
     }
   },
   getAll: async (req, res) => {
     try {
       const response = await UserModel.find();
-      res.status(200).json({ response });
+      return res.status(200).json({ response });
     } catch (err) {
       console.log(err);
+      return res.status(500).json({ error: 'Erro ao buscar usuários' });
     }
   },
-  getQueryParms: async (req, res) => {
-    if (req.query.name) {
-      try {
-        const response = await UserModel.find({
-          name: new RegExp(req.query.name, 'i'),
-        });
-        res.status(200).json({ response });
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    if (req.query.email) {
-      try {
-        const response = await UserModel.find({
-          email: new RegExp(req.query.email, 'i'),
-        });
-        res.status(200).json({ response });
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    if (req.query.hash) {
-      try {
-        const response = await UserModel.find({ hash: req.query.hash });
 
-        res.status(200).json({ response });
-      } catch (err) {
-        console.log(err);
+  getById: async (req, res) => {
+    try {
+      const idUser = req.params.idUser;
+      const response = await UserModel.findOne({ idUser });
+      if (!response) {
+        return res.status(400).json({ error: 'Usuário não existe!' });
       }
+      return res.status(200).json({ response });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'Erro ao buscar usuário' });
     }
   },
+
+  getByEmail: async (req, res) => {
+    try {
+      const email = req.params.email;
+      const response = await UserModel.findOne({ email }).select('+password');
+      if (!response) {
+        return res.status(400).json({ error: 'Email não existe!' });
+      }
+      return res.status(200).json({ response });
+    } catch (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'Erro ao buscar email!' });
+    }
+  },
+
   delete: async (req, res) => {
     try {
-      console.log(req.query.hash);
-      const response = await UserModel.deleteOne({ hash: req.query.hash });
-      res.status(200).json({ msg: 'Registro deletado com sucesso!' });
+      const idUser = req.params.idUser;
+      const response = await UserModel.findOneAndDelete({ idUser });
+      if (!response) {
+        return res.status(400).json({ error: 'Id do usuário não existe!' });
+      }
+      return res.status(200).json({ msg: 'Usuário deletado com sucesso!' });
     } catch (err) {
       console.log(err);
+      return res.status(500).json({ error: 'Erro ao deletar usuário' });
     }
   },
+
   update: async (req, res) => {
-    const { name, email, password, hash } = req.body;
     try {
+      const idUser = req.params.idUser;
+      const { name, email, role, password, picture, employeesID } = req.body;
       const user = {
-        hash,
         name,
         email,
         password,
+        role,
+        picture,
+        employees: await ResponsibleFreightModel.find({
+          idResponsible: employeesID,
+        }),
+        employeesID,
       };
 
-      const response = await UserModel.updateOne(
-        { hash: req.query.hash },
-        user
-      );
-      res
+      const response = await UserModel.findOneAndUpdate({ idUser }, user, {
+        new: true,
+      });
+
+      return res
         .status(200)
-        .json({ response, msg: 'Registro atualizado com sucesso!' });
+        .json({ response, msg: 'Usuário atualizado com sucesso!' });
     } catch (err) {
-      if (err.code === 11000) {
-        try {
-          const response = await UserModel.findOne({ email });
-          if (response) {
-            res.status(200).json({ error: 'Email de registro já existe!' });
-          } else {
-            return res
-              .status(400)
-              .json({ error: 'Hash de registro já existe!' });
-          }
-        } catch (err) {
-          res.status(400).json({ error: 'Falha no registro' });
-        }
-      }
       console.log(err);
+      return res.status(500).json({ error: 'Erro ao atualizar usuário' });
+    }
+  },
+  updateByEmail: async (req, res) => {
+    try {
+      const email = req.params.email;
+      const { name, role, password, picture, employeesID } = req.body;
+
+      const actualUser = await UserModel.findOne({ email: email });
+      const actualEmployeesId = actualUser.employeesID;
+      
+      let totalEmployeesSet = [];
+      totalEmployeesSet = actualEmployeesId;
+      // Usando um Set para armazenar os IDs únicos
+
+      if (totalEmployeesSet.includes(employeesID)) {
+        console.log('ID já existe');
+      }
+      else
+      {
+        totalEmployeesSet.push(employeesID);
+      }
+      // Convertendo o Set de volta para um array
+      const totalEmployees = Array.from(totalEmployeesSet);
+
+      const user = {
+        name,
+        email,
+        password,
+        role,
+        picture,
+        employees: await ResponsibleFreightModel.find({
+          idResponsible: totalEmployees,
+        }),
+        employeesID: totalEmployees,
+      };
+
+      const response = await UserModel.findOneAndUpdate(
+        { email: email },
+        user,
+        {
+          new: true,
+        }
+      );
+
+      if (!response) {
+        return res.status(400).json({ error: 'Email não existe!' });
+      }
+
+      return res
+        .status(200)
+        .json({ response, msg: 'Usuário atualizado com sucesso!' });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'Erro ao atualizar usuário' });
     }
   },
 };
