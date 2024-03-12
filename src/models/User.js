@@ -14,14 +14,17 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  phone: {
+    type: String,
+    required: true,
+  },
   password: {
     type: String,
     required: true,
     select: false,
   },
   picture: {
-    data: Buffer,
-    contentType: String,
+    type: String,
   },
   role: {
     type: String,
@@ -44,6 +47,27 @@ const UserSchema = new mongoose.Schema({
   },
   employeesID: {
     type: Array,
+  },
+  cep: {
+    type: String,
+  },
+  city: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
+  neighborhood: {
+    type: String,
+  },
+  street: {
+    type: String,
+  },
+  number: {
+    type: String,
+  },
+  complement: {
+    type: String,
   },
 });
 

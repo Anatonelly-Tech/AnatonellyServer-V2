@@ -1,8 +1,12 @@
 const router = require('express').Router();
 
+const upload = require('../config/multer');
+
 const userController = require('../controllers/userController');
 
-router.route('/user').post((req, res) => userController.create(req, res));
+router.route('/user').post(upload.single('picture'), (req, res) => {
+  userController.create(req, res);
+});
 
 router.route('/user').get((req, res) => userController.getAll(req, res));
 
@@ -25,5 +29,8 @@ router
 router
   .route('/userAtt/:email')
   .put((req, res) => userController.updateByEmail(req, res));
+router
+  .route('/userRem/:email')
+  .put((req, res) => userController.updateByEmailRemoveResp(req, res));
 
 module.exports = router;
