@@ -22,7 +22,7 @@ const userController = {
         number,
         complement,
       } = req.body;
-      const img = req.file;
+      const picture = req.file ? req.file.path : '';
 
       const user = {
         name,
@@ -30,7 +30,7 @@ const userController = {
         role,
         phone,
         password,
-        picture: img.path,
+        picture: picture,
         cep,
         city,
         state,
@@ -135,13 +135,14 @@ const userController = {
         complement,
       } = req.body;
 
-      const picture = req.file;
+      const picture = req.file ? req.file.path : '';
+
       const user = {
         name,
         email,
         password,
         role,
-        picture: picture.path,
+        picture: picture,
         phone,
         cep,
         city,
@@ -186,14 +187,14 @@ const userController = {
         complement,
       } = req.body;
 
-      const picture = req.file;
+      const picture = req.file ? req.file.path : '';
       const actualUser = await UserModel.findOne({ email: email });
       const actualEmployeesId = actualUser.employeesID;
 
       // Usando um Set para armazenar os IDs únicos
       let totalEmployees = [];
       totalEmployees = actualEmployeesId.filter(
-        (item) => item !== employeesID[0]
+        (item) => item !== employeesID
       );
 
       const finalEmployees = Array.from(totalEmployees);
@@ -204,7 +205,7 @@ const userController = {
         email,
         password,
         role,
-        picture: picture.path,
+        picture: picture,
         phone,
         cep,
         city,
@@ -256,7 +257,7 @@ const userController = {
         number,
         complement,
       } = req.body;
-      const picture = req.file;
+      const picture = req.file ? req.file.path : '';
 
       const actualUser = await UserModel.findOne({ email: email });
       const actualEmployeesId = actualUser.employeesID;
@@ -273,15 +274,14 @@ const userController = {
           totalEmployeesSet.push(employeesID);
         }
       }
-      // Convertendo o Set de volta para um array
       const totalEmployees = Array.from(totalEmployeesSet);
-
+      console.log(totalEmployees);
       const user = {
         name,
         email,
         password,
         role,
-        picture: picture.path,
+        picture: picture,
 
         phone,
         cep,
