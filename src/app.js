@@ -15,6 +15,6 @@ connection();
 // Routes
 const routes = require('./routes/router');
 
-const port = 3030;
+const port = process.env.PORT || 3030;
 app.use('/api', routes);
 app.listen(port, () => console.log('Server is running on port', port));
