@@ -17,10 +17,4 @@ const routes = require('./routes/router');
 
 const port = process.env.PORT || 3030;
 app.use('/api', routes);
-app.listen(
-  {
-    host: '0.0.0.0',
-    port,
-  },
-  () => console.log('Server is running on port', port)
-);
+app.listen(port, () => console.log('Server is running on port', port));
