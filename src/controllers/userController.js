@@ -2,6 +2,7 @@ const { User: UserModel } = require('../models/User');
 const {
   ResponsibleFreight: ResponsibleFreightModel,
 } = require('../models/ResponsibleFreight');
+const { FormData: FormDataModel } = require('../models/FormData');
 
 const fs = require('fs');
 
@@ -125,6 +126,7 @@ const userController = {
         role,
         password,
         employeesID,
+        freightsID,
         phone,
         cep,
         city,
@@ -154,6 +156,8 @@ const userController = {
         employees: await ResponsibleFreightModel.find({
           idResponsible: employeesID,
         }),
+        freightsID,
+        freights: await FormDataModel.find({ idForm: freightsID }),
         employeesID,
       };
 
@@ -190,14 +194,16 @@ const userController = {
       const picture = req.file ? req.file.path : '';
       const actualUser = await UserModel.findOne({ email: email });
       const actualEmployeesId = actualUser.employeesID;
+      const actualFreightsId = actualUser.freightsID;
 
       // Usando um Set para armazenar os IDs únicos
       let totalEmployees = [];
-      totalEmployees = actualEmployeesId.filter(
-        (item) => item !== employeesID
-      );
+      let totalFreights = [];
+      totalEmployees = actualEmployeesId.filter((item) => item !== employeesID);
+      totalFreights = actualFreightsId.filter((item) => item !== freightsID);
 
       const finalEmployees = Array.from(totalEmployees);
+      const finalFreights = Array.from(totalFreights);
       // Convertendo o Set de volta para um array
 
       const user = {
@@ -218,6 +224,8 @@ const userController = {
           idResponsible: finalEmployees,
         }),
         employeesID: finalEmployees,
+        freightsID: finalFreights,
+        freights: await FormDataModel.find({ idForm: finalFreights }),
       };
 
       const response = await UserModel.findOneAndUpdate(
@@ -248,6 +256,7 @@ const userController = {
         role,
         password,
         employeesID,
+        freightsID,
         phone,
         cep,
         city,
@@ -260,58 +269,194 @@ const userController = {
       const picture = req.file ? req.file.path : '';
 
       const actualUser = await UserModel.findOne({ email: email });
+
       const actualEmployeesId = actualUser.employeesID;
+      const actualFreightsId = actualUser.freightsID;
+
+      console.log('actualEmployeesID', actualEmployeesId);
 
       let totalEmployeesSet = [];
+      let totalFreightsSet = [];
       totalEmployeesSet = actualEmployeesId;
+      totalFreightsSet = actualFreightsId;
+
       // Usando um Set para armazenar os IDs únicos
-      if (totalEmployeesSet.length === 0) {
-        totalEmployeesSet.push(employeesID);
-      } else {
-        if (totalEmployeesSet.includes(employeesID)) {
-          console.log('ID já existe');
-        } else {
+      if (employeesID !== undefined) {
+        if (totalEmployeesSet.length === 0) {
           totalEmployeesSet.push(employeesID);
+        } else {
+          employeesID.map((employeesID) => {
+            if (totalEmployeesSet.includes(employeesID)) {
+              console.log('ID já existe');
+            } else {
+              totalEmployeesSet.push(employeesID);
+            }
+          });
+        }
+      }
+      console.log('totalEmployees', totalEmployeesSet);
+
+      if (freightsID !== undefined) {
+        if (totalFreightsSet.length === 0) {
+          totalFreightsSet.push(freightsID);
+        } else {
+          freightsID.map((freightsID) => {
+            if (totalFreightsSet.includes(freightsID)) {
+              console.log('ID já existe');
+            } else {
+              totalFreightsSet.push(freightsID);
+            }
+          });
         }
       }
       const totalEmployees = Array.from(totalEmployeesSet);
+      const totalFreights = Array.from(totalFreightsSet);
       console.log(totalEmployees);
-      const user = {
-        name,
-        email,
-        password,
-        role,
-        picture: picture,
+      console.log(totalFreights);
 
-        phone,
-        cep,
-        city,
-        state,
-        neighborhood,
-        street,
-        number,
-        complement,
-        employees: await ResponsibleFreightModel.find({
-          idResponsible: totalEmployees,
-        }),
-        employeesID: totalEmployees,
-      };
+      if (totalEmployees.length === 0 && totalFreights.length === 0) {
+        const user = {
+          name,
+          email,
+          password,
+          role,
+          picture: picture,
+          phone,
+          cep,
+          city,
+          state,
+          neighborhood,
+          street,
+          number,
+          complement,
+          employeesID,
+          freightsID,
+        };
 
-      const response = await UserModel.findOneAndUpdate(
-        { email: email },
-        user,
-        {
-          new: true,
+        const response = await UserModel.findOneAndUpdate(
+          { email: email },
+          user,
+          {
+            new: true,
+          }
+        );
+
+        if (!response) {
+          return res.status(400).json({ error: 'Email não existe!' });
         }
-      );
 
-      if (!response) {
-        return res.status(400).json({ error: 'Email não existe!' });
+        return res
+          .status(200)
+          .json({ response, msg: 'Usuário atualizado com sucesso!' });
+      } else if (totalFreights.length === 0) {
+        const user = {
+          name,
+          email,
+          password,
+          role,
+          picture: picture,
+          phone,
+          cep,
+          city,
+          state,
+          neighborhood,
+          street,
+          number,
+          complement,
+          employeesID: totalEmployees,
+          employees: await ResponsibleFreightModel.find({
+            idResponsible: totalEmployees,
+          }),
+        };
+
+        const response = await UserModel.findOneAndUpdate(
+          { email: email },
+          user,
+          {
+            new: true,
+          }
+        );
+
+        if (!response) {
+          return res.status(400).json({ error: 'Email não existe!' });
+        }
+
+        return res
+          .status(200)
+          .json({ response, msg: 'Usuário atualizado com sucesso!' });
+      } else if (totalEmployees.length === 0) {
+        const user = {
+          name,
+          email,
+          password,
+          role,
+          picture: picture,
+          phone,
+          cep,
+          city,
+          state,
+          neighborhood,
+          street,
+          number,
+          complement,
+          freightsID: totalFreights,
+          freights: await FormDataModel.find({ idForm: totalFreights }),
+        };
+
+        const response = await UserModel.findOneAndUpdate(
+          { email: email },
+          user,
+          {
+            new: true,
+          }
+        );
+
+        if (!response) {
+          return res.status(400).json({ error: 'Email não existe!' });
+        }
+
+        return res
+          .status(200)
+          .json({ response, msg: 'Usuário atualizado com sucesso!' });
+      } else {
+        const user = {
+          name,
+          email,
+          password,
+          role,
+          picture: picture,
+          phone,
+          cep,
+          city,
+          state,
+          neighborhood,
+          street,
+          number,
+          complement,
+          freightsID: totalFreights,
+          freights: await FormDataModel.find({ idForm: totalFreights }),
+          employeesID: totalEmployees,
+          employees: await ResponsibleFreightModel.find({
+            idResponsible: totalEmployees,
+          }),
+        };
+
+        const response = await UserModel.findOneAndUpdate(
+          { email: email },
+          user,
+          {
+            new: true,
+          }
+        );
+
+        if (!response) {
+          return res.status(400).json({ error: 'Email não existe!' });
+        }
+
+        return res
+          .status(200)
+          .json({ response, msg: 'Usuário atualizado com sucesso!' });
       }
-
-      return res
-        .status(200)
-        .json({ response, msg: 'Usuário atualizado com sucesso!' });
     } catch (err) {
       console.log(err);
       return res.status(500).json({ error: 'Erro ao atualizar usuário' });

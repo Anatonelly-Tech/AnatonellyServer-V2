@@ -48,6 +48,12 @@ const UserSchema = new mongoose.Schema({
   employeesID: {
     type: Array,
   },
+  freights: {
+    type: Array,
+  },
+  freightsID: {
+    type: Array,
+  },
   cep: {
     type: String,
   },
