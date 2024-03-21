@@ -273,7 +273,6 @@ const userController = {
       const actualEmployeesId = actualUser.employeesID;
       const actualFreightsId = actualUser.freightsID;
 
-      console.log('actualEmployeesID', actualEmployeesId);
 
       let totalEmployeesSet = [];
       let totalFreightsSet = [];
@@ -329,8 +328,6 @@ const userController = {
           street,
           number,
           complement,
-          employeesID,
-          freightsID,
         };
 
         const response = await UserModel.findOneAndUpdate(
