@@ -173,7 +173,7 @@ const userController = {
       return res.status(500).json({ error: 'Erro ao atualizar usuário' });
     }
   },
-  updateByEmailRemoveResp: async (req, res) => {
+  updateByEmailRemove: async (req, res) => {
     try {
       const email = req.params.email;
       const {
@@ -181,6 +181,7 @@ const userController = {
         role,
         password,
         employeesID,
+        freightsID,
         phone,
         cep,
         city,
@@ -196,53 +197,172 @@ const userController = {
       const actualEmployeesId = actualUser.employeesID;
       const actualFreightsId = actualUser.freightsID;
 
-      // Usando um Set para armazenar os IDs únicos
       let totalEmployees = [];
       let totalFreights = [];
-      totalEmployees = actualEmployeesId.filter((item) => item !== employeesID);
-      totalFreights = actualFreightsId.filter((item) => item !== freightsID);
+
+      let removeCountEmployees = 0;
+      let removeCountFreights = 0;
+
+      if (employeesID !== undefined) {
+        totalEmployees = actualEmployeesId.filter(
+          (item) => item !== employeesID
+        );
+        removeCountEmployees++;
+      }
+      if (freightsID !== undefined) {
+        totalFreights = actualFreightsId.filter((item) => item !== freightsID);
+        removeCountFreights++;
+      }
 
       const finalEmployees = Array.from(totalEmployees);
       const finalFreights = Array.from(totalFreights);
-      // Convertendo o Set de volta para um array
 
-      const user = {
-        name,
-        email,
-        password,
-        role,
-        picture: picture,
-        phone,
-        cep,
-        city,
-        state,
-        neighborhood,
-        street,
-        number,
-        complement,
-        employees: await ResponsibleFreightModel.find({
-          idResponsible: finalEmployees,
-        }),
-        employeesID: finalEmployees,
-        freightsID: finalFreights,
-        freights: await FormDataModel.find({ idForm: finalFreights }),
-      };
+      if (
+        finalEmployees.length === 0 &&
+        finalFreights.length === 0 &&
+        removeCountEmployees === 0 &&
+        removeCountFreights === 0
+      ) {
+        const user = {
+          name,
+          email,
+          password,
+          role,
+          picture: picture,
+          phone,
+          cep,
+          city,
+          state,
+          neighborhood,
+          street,
+          number,
+          complement,
+        };
 
-      const response = await UserModel.findOneAndUpdate(
-        { email: email },
-        user,
-        {
-          new: true,
+        const response = await UserModel.findOneAndUpdate(
+          { email: email },
+          user,
+          {
+            new: true,
+          }
+        );
+
+        if (!response) {
+          return res.status(400).json({ error: 'Email não existe!' });
         }
-      );
 
-      if (!response) {
-        return res.status(400).json({ error: 'Email não existe!' });
+        return res
+          .status(200)
+          .json({ response, msg: 'Usuário atualizado com sucesso!' });
+      } else if (finalFreights.length === 0 && removeCountFreights === 0) {
+        const user = {
+          name,
+          email,
+          password,
+          role,
+          picture: picture,
+          phone,
+          cep,
+          city,
+          state,
+          neighborhood,
+          street,
+          number,
+          complement,
+          employeesID: finalEmployees,
+          employees: await ResponsibleFreightModel.find({
+            idResponsible: finalEmployees,
+          }),
+        };
+
+        const response = await UserModel.findOneAndUpdate(
+          { email: email },
+          user,
+          {
+            new: true,
+          }
+        );
+
+        if (!response) {
+          return res.status(400).json({ error: 'Email não existe!' });
+        }
+
+        return res
+          .status(200)
+          .json({ response, msg: 'Usuário atualizado com sucesso!' });
+      } else if (finalEmployees.length === 0 && removeCountEmployees === 0) {
+        const user = {
+          name,
+          email,
+          password,
+          role,
+          picture: picture,
+          phone,
+          cep,
+          city,
+          state,
+          neighborhood,
+          street,
+          number,
+          complement,
+          freightsID: finalFreights,
+          freights: await FormDataModel.find({ idForm: finalFreights }),
+        };
+
+        const response = await UserModel.findOneAndUpdate(
+          { email: email },
+          user,
+          {
+            new: true,
+          }
+        );
+
+        if (!response) {
+          return res.status(400).json({ error: 'Email não existe!' });
+        }
+
+        return res
+          .status(200)
+          .json({ response, msg: 'Usuário atualizado com sucesso!' });
+      } else {
+        const user = {
+          name,
+          email,
+          password,
+          role,
+          picture: picture,
+          phone,
+          cep,
+          city,
+          state,
+          neighborhood,
+          street,
+          number,
+          complement,
+          freightsID: finalFreights,
+          freights: await FormDataModel.find({ idForm: finalFreights }),
+          employeesID: finalEmployees,
+          employees: await ResponsibleFreightModel.find({
+            idResponsible: finalEmployees,
+          }),
+        };
+
+        const response = await UserModel.findOneAndUpdate(
+          { email: email },
+          user,
+          {
+            new: true,
+          }
+        );
+
+        if (!response) {
+          return res.status(400).json({ error: 'Email não existe!' });
+        }
+
+        return res
+          .status(200)
+          .json({ response, msg: 'Usuário atualizado com sucesso!' });
       }
-
-      return res
-        .status(200)
-        .json({ response, msg: 'Usuário atualizado com sucesso!' });
     } catch (err) {
       console.log(err);
       return res.status(500).json({ error: 'Erro ao atualizar usuário' });
@@ -272,7 +392,6 @@ const userController = {
 
       const actualEmployeesId = actualUser.employeesID;
       const actualFreightsId = actualUser.freightsID;
-
 
       let totalEmployeesSet = [];
       let totalFreightsSet = [];

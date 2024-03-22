@@ -31,6 +31,6 @@ router
   .put((req, res) => userController.updateByEmail(req, res));
 router
   .route('/userRem/:email')
-  .put((req, res) => userController.updateByEmailRemoveResp(req, res));
+  .put((req, res) => userController.updateByEmailRemove(req, res));
 
 module.exports = router;
