@@ -403,13 +403,11 @@ const userController = {
         if (totalEmployeesSet.length === 0) {
           totalEmployeesSet.push(employeesID);
         } else {
-          employeesID.map((employeesID) => {
-            if (totalEmployeesSet.includes(employeesID)) {
-              console.log('ID já existe');
-            } else {
-              totalEmployeesSet.push(employeesID);
-            }
-          });
+          if (totalEmployeesSet.includes(employeesID)) {
+            console.log('ID já existe');
+          } else {
+            totalEmployeesSet.push(employeesID);
+          }
         }
       }
       console.log('totalEmployees', totalEmployeesSet);
@@ -418,13 +416,11 @@ const userController = {
         if (totalFreightsSet.length === 0) {
           totalFreightsSet.push(freightsID);
         } else {
-          freightsID.map((freightsID) => {
-            if (totalFreightsSet.includes(freightsID)) {
-              console.log('ID já existe');
-            } else {
-              totalFreightsSet.push(freightsID);
-            }
-          });
+          if (totalFreightsSet.includes(freightsID)) {
+            console.log('ID já existe');
+          } else {
+            totalFreightsSet.push(freightsID);
+          }
         }
       }
       const totalEmployees = Array.from(totalEmployeesSet);
