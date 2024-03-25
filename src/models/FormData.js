@@ -57,8 +57,7 @@ const FormDataSchema = new mongoose.Schema({
   width: {
     type: String,
   },
-  idResponsible:
-  {
+  idResponsible: {
     type: Array,
     required: true,
   },
@@ -96,12 +95,12 @@ const FormDataSchema = new mongoose.Schema({
   radioValueLona: {
     type: String,
     required: true,
-    enum: ['Sim', 'Não'],
+    enum: ['needCover', 'dontNeedCover'],
   },
   radioValueRastreador: {
     type: String,
     required: true,
-    enum: ['Sim', 'Não'],
+    enum: ['needTracker', 'dontNeedTracker'],
   },
   unitMeasurement: {
     type: String,
