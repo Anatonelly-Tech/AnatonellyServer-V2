@@ -104,6 +104,17 @@ const formDataController = {
       console.log(err);
     }
   },
+  getByName: async (req, res) => {
+    try {
+      const name = req.params.name;
+
+      const response = await FormDataModel.findOne({ name });
+
+      res.status(200).json({ response });
+    } catch (err) {
+      console.log(err);
+    }
+  },
   delete: async (req, res) => {
     try {
       const idForm = req.params.idForm;

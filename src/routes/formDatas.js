@@ -15,6 +15,10 @@ router
   .get((req, res) => formDataController.getById(req, res));
 
 router
+  .route('/formDataName/:name')
+  .get((req, res) => formDataController.getByName(req, res));
+
+router
   .route('/formData/:idForm')
   .delete((req, res) => formDataController.delete(req, res));
 
